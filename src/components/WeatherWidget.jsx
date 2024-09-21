@@ -40,7 +40,7 @@ const WeatherWidget = ({ onWeatherData }) => {
     try {
       const API_KEY = '6c23985074dc48fbacc182254242109';
       const response = await axios.get(
-        `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${lat},${lon}&aqi=no`
+        `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${lat},${lon}&aqi=no`
       );
       setWeather(response.data);
       onWeatherData(response.data);

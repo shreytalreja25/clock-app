@@ -114,7 +114,7 @@ const WeatherRecommendation = ({ weather, location }) => {
       {loading ? (
         <p>Loading recommendation...</p>
       ) : (
-        <p>Activity: {recommendation}</p>
+        <p>{recommendation}</p>
       )}
 
       <ButtonContainer>
