@@ -8,21 +8,24 @@ const ClockContainer = styled.div`
   color: ${({ theme }) => theme.body === '#121212' ? '#ffffff' : '#000000'};
   text-align: center;
   margin: 20px auto;
-  max-width: 600px;  // Add this to control the width
+  max-width: 600px;
 `;
-
 
 const Clock = () => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
-    const intervalId = setInterval(() => setTime(new Date()), 1000);
+    const intervalId = setInterval(() => setTime(new Date()), 60000); // Update every minute
     return () => clearInterval(intervalId);
   }, []);
 
+  const formatTime = (date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
     <ClockContainer>
-      {time.toLocaleTimeString()}
+      {formatTime(time)}
     </ClockContainer>
   );
 };
