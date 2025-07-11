@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import OpenAI from "openai";
+// import OpenAI from "openai";
+// import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 // Styling for the Recommendation Container
 const RecommendationContainer = styled.div`
@@ -63,23 +65,37 @@ const WeatherRecommendation = ({ weather, location }) => {
       const now = new Date();
       const hours = now.getHours();
       const timeOfDay = `${hours < 12 ? "morning" : hours < 18 ? "afternoon" : "evening"}`;
-      const api_Key = import.meta.env.VITE_OPENAI_API_KEY;
-      const openai = new OpenAI({
-        apiKey: api_Key,
-        dangerouslyAllowBrowser: true // Use the environment variable here
-      });
+      
+      // OpenAI implementation (commented out)
+      // const api_Key = import.meta.env.VITE_OPENAI_API_KEY;
+      // const openai = new OpenAI({
+      //   apiKey: api_Key,
+      //   dangerouslyAllowBrowser: true
+      // });
+      // const completion = await openai.chat.completions.create({
+      //   model: "gpt-4",
+      //   messages: [{ role: "user", content: prompt }],
+      // });
+      // const responseText = completion.choices[0].message.content.trim();
 
+      // GoogleGenerativeAI implementation (commented out)
+      // const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      // const genAI = new GoogleGenerativeAI(geminiApiKey);
+      // const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      // const result = await model.generateContent(prompt);
+      // const responseText = result.response.text().trim();
+
+      // Gemini (GoogleGenAI) implementation
+      const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
       const prompt = `
         Based on the current weather in ${location.name}, ${location.country}, with ${weather.current.condition.text} conditions 
         and a temperature of ${weather.current.temp_c}°C during the ${timeOfDay}, suggest one nearby activity that is suitable under these conditions. 
         Provide both a brief description of the activity (limited to 3-4 lines) and the name of the specific location (only the name of the place).`;
-
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4",
-        messages: [{ role: "user", content: prompt }],
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
       });
-
-      const responseText = completion.choices[0].message.content.trim();
+      const responseText = response.text.trim();
       const splitResponse = responseText.split("Location:");
       const activityText = splitResponse[0].trim();
       const locationName = splitResponse[1] ? splitResponse[1].trim() : "";
@@ -88,7 +104,7 @@ const WeatherRecommendation = ({ weather, location }) => {
       setPlace(locationName); // Set the exact place name for Google Maps
     } catch (error) {
       console.error("Error fetching recommendation:", error);
-      setRecommendation("Sorry, I couldn’t fetch a recommendation at this time.");
+      setRecommendation("Sorry, I couldn't fetch a recommendation at this time.");
     } finally {
       setLoading(false);
     }
